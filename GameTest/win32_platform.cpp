@@ -1,5 +1,7 @@
 #include "util.cpp"
 #include <Windows.h>
+#include <string>
+
 
 global_variable bool running = true;
 
@@ -66,9 +68,12 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	//comment for Rita :3
 	//Create Window
-	HWND window = CreateWindow(window_class.lpszClassName, L"Game V0.01", WS_OVERLAPPED | WS_MAXIMIZEBOX | WS_SYSMENU | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
+	HWND window = CreateWindow(window_class.lpszClassName, L"Game V0.01", WS_OVERLAPPEDWINDOW | WS_MAXIMIZEBOX | WS_SYSMENU | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
 	HDC hdc = GetDC(window);
-	
+	PAINTSTRUCT paintStruct;
+	RECT rectPlace;
+	HFONT hFont;
+
 	Input input = {};
 
 	float delta_time = 0.016666f;
@@ -124,6 +129,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		QueryPerformanceCounter(&frame_end_time);
 		delta_time = (float)(frame_end_time.QuadPart - frame_begin_time.QuadPart) / perfomance_frequency;
 		frame_begin_time = frame_end_time;
+		
+		/*RECT rectPlace;
+		GetClientRect(window, &rectPlace);
+		SetTextColor(hdc, NULL);
+		hFont = CreateFont(28, 0, 0, 0, 0, 0, 0, 0,
+			DEFAULT_CHARSET,
+			0, 0, 0, 0,
+			L"Arial Bold"
+		);
+
+		DrawTextA(hdc, std::to_string(delta_time).data(), 12, &rectPlace, DT_SINGLELINE | DT_TOP | DT_LEFT);*/
 	}
 
 }

@@ -65,7 +65,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	RegisterClass(&window_class);
 
 	//Create Window
-	HWND window = CreateWindow(window_class.lpszClassName, L"Game V0.01", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
+	HWND window = CreateWindow(window_class.lpszClassName, L"Game V0.01", WS_OVERLAPPED | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
 	HDC hdc = GetDC(window);
 	
 	Input input = {};

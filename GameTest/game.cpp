@@ -37,8 +37,6 @@ public:
 
 		//if (is_down(BUTTON_DOWN)) player_pos_y -= grav * dt;
 
-
-
 		if (is_down(BUTTON_RIGHT) || is_down(BUTTON_LEFT)) {
 			vel_x < max_speed ? vel_x += acc * dt : vel_x = max_speed;
 			if (is_down(BUTTON_RIGHT))

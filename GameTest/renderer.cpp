@@ -1,3 +1,42 @@
+class Object {
+public:
+	float	pos_x;
+	float	pos_y;
+	float	half_size_x;
+	float	half_size_y;
+	uint	color;
+
+	Object() {}
+
+	Object(float X, float Y, float SizeX, float SizeY, uint color) {
+		this->pos_x = X + SizeX / 2;
+		this->pos_y = Y + SizeY / 2;
+		this->half_size_x = SizeX / 2;
+		this->half_size_y = SizeY / 2;
+		this->color = color;
+	}
+};
+
+class Objects {
+private:
+	Object* objects;
+	int count;
+
+public:
+	int load() {
+		count = 2;
+		objects = new Object[count];
+		objects[0] = Object(50, 50, 5, 50, 0xFF5500);
+		objects[1] = Object(0, -5, 500, 5, 0xFF5500);
+		return count;
+	}
+
+	Object* get() { return objects; }
+	int getCount() { return count; }
+
+};
+
+
 internal void 
 clear_screen(uint color) {
 	uint* pixel = (uint*)render_state.memory;
@@ -24,7 +63,7 @@ draw_rect_in_pixels(int x0, int y0, int x1, int y1, uint color) {
 	}
 }
 
-global_variable float render_scale = 0.005f;
+global_variable float render_scale = 0.0025f;
 
 internal void
 draw_rect(float x, float y, float half_x, float half_y, uint color) {
@@ -44,4 +83,10 @@ draw_rect(float x, float y, float half_x, float half_y, uint color) {
 
 
 	draw_rect_in_pixels(x0, y0, x1, y1, color);
+}
+
+internal void
+draw_objects(float cam_x, float cam_y, std::vector<Object> objects, int count) {
+	for (int i = 0; i < count; i++)
+		draw_rect(objects[i].pos_x - cam_x, objects[i].pos_y - cam_y, objects[i].half_size_x, objects[i].half_size_y, objects[i].color);
 }

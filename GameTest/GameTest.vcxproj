@@ -157,6 +157,11 @@
     </ClCompile>
     <ClCompile Include="win32_platform.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="levels.db">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

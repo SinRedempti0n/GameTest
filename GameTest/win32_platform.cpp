@@ -1,7 +1,7 @@
 #include "util.cpp"
 #include <Windows.h>
 #include <string>
-
+#include <vector>
 
 global_variable bool running = true;
 
@@ -66,7 +66,6 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	//Register class
 	RegisterClass(&window_class);
 
-	//comment for Rita :3
 	//Create Window
 	HWND window = CreateWindow(window_class.lpszClassName, L"Game V0.01", WS_OVERLAPPEDWINDOW | WS_MAXIMIZEBOX | WS_SYSMENU | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
 	HDC hdc = GetDC(window);
@@ -77,10 +76,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	Input input = {};
 
 	float delta_time = 0.016666f;
-
 	LARGE_INTEGER frame_begin_time;
 	QueryPerformanceCounter(&frame_begin_time);
-	
 	float perfomance_frequency;
 	{
 		LARGE_INTEGER perf;
@@ -88,13 +85,17 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 		perfomance_frequency = (float)perf.QuadPart;
 	}
 
+	//INITIALIZE
+	Level level1;
+	level1.load();
+
 	while (running) {
 		//Input
 		MSG message;
-
 		for (int i = 0; i < BUTTON_COUNT; i++)
 			input.buttons[i].changed = false;
-
+		
+		//Message from windows
 		while (PeekMessage(&message, window, 0, 0, PM_REMOVE)) {
 			switch (message.message) {
 				case WM_KEYUP: 
@@ -118,28 +119,18 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			}
 			
 		}
+		
 		//Simulate
-
-		simulate_game(&input, delta_time);
+		level1.run(&input, delta_time);
 
 		//Render
 		StretchDIBits(hdc, 0, 0, render_state.width, render_state.height, 0, 0, render_state.width, render_state.height, render_state.memory, &render_state.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
-
+		
+		//Count delta time
 		LARGE_INTEGER frame_end_time;
 		QueryPerformanceCounter(&frame_end_time);
 		delta_time = (float)(frame_end_time.QuadPart - frame_begin_time.QuadPart) / perfomance_frequency;
 		frame_begin_time = frame_end_time;
-		
-		/*RECT rectPlace;
-		GetClientRect(window, &rectPlace);
-		SetTextColor(hdc, NULL);
-		hFont = CreateFont(28, 0, 0, 0, 0, 0, 0, 0,
-			DEFAULT_CHARSET,
-			0, 0, 0, 0,
-			L"Arial Bold"
-		);
-
-		DrawTextA(hdc, std::to_string(delta_time).data(), 12, &rectPlace, DT_SINGLELINE | DT_TOP | DT_LEFT);*/
 	}
 
 }

@@ -87,7 +87,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	//INITIALIZE
 	Level level1;
-	level1.load();
+	level1.load(1);
 
 	while (running) {
 		//Input
@@ -104,10 +104,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 					bool is_down = ((message.lParam & (1 << 31)) == 0);
 
 					switch (vk_code){
-						process_button(BUTTON_UP, VK_UP);
-						process_button(BUTTON_DOWN, VK_DOWN);
-						process_button(BUTTON_LEFT, VK_LEFT);
-						process_button(BUTTON_RIGHT, VK_RIGHT);
+						process_button(BUTTON_UP, 'W');
+						process_button(BUTTON_DOWN, 'S');
+						process_button(BUTTON_LEFT, 'A');
+						process_button(BUTTON_RIGHT, 'D');
+						process_button(BUTTON_ACTION, 'F');
 					}
 
 				}break;

@@ -6,7 +6,23 @@ public:
 	float	half_size_y;
 	uint	color;
 
+	bool state;
+
 	Object() {}
+
+	void flip () {
+		this->state = !state;
+		if (state == true) {
+			this->color = 0x00FF00;
+		}
+		else {
+			this->color = 0xFF0000;
+		}
+	}
+
+	bool isActive() {
+		return state;
+	}
 
 	Object(float X, float Y, float SizeX, float SizeY, uint color) {
 		this->pos_x = X + SizeX / 2;
@@ -14,6 +30,15 @@ public:
 		this->half_size_x = SizeX / 2;
 		this->half_size_y = SizeY / 2;
 		this->color = color;
+	}
+	
+	Object(float X, float Y, float SizeX, float SizeY, uint color, bool state) {
+		this->pos_x = X + SizeX / 2;
+		this->pos_y = Y + SizeY / 2;
+		this->half_size_x = SizeX / 2;
+		this->half_size_y = SizeY / 2;
+		this->color = color;
+		this->state = state;
 	}
 };
 
@@ -86,7 +111,7 @@ draw_rect(float x, float y, float half_x, float half_y, uint color) {
 }
 
 internal void
-draw_objects(float cam_x, float cam_y, std::vector<Object> objects, int count) {
-	for (int i = 0; i < count; i++)
-		draw_rect(objects[i].pos_x - cam_x, objects[i].pos_y - cam_y, objects[i].half_size_x, objects[i].half_size_y, objects[i].color);
+draw_objects(float cam_x, float cam_y, std::vector<Object> &objects) {
+	for (Object obj: objects)
+		draw_rect(obj.pos_x - cam_x, obj.pos_y - cam_y, obj.half_size_x, obj.half_size_y, obj.color);
 }

@@ -8,192 +8,96 @@ global_variable float camera_pos_y = 0.f;
 #include <cmath>
 #include <algorithm>
 
+#include "Entity.cpp"
 
-class Entity {
-public:
-	//Position
-	float pos_x;
-	float pos_y;
-	Object platform;
-
-	//Size
-	float half_size_x;
-	float half_size_y;
-	Entity() {}
-
-	Entity(float X, float Y, float hSizeX, float hSizeY) {
-		this->pos_x = X;
-		this->pos_y = Y;
-		this->half_size_x = hSizeX;
-		this->half_size_y = hSizeY;
-	}
-};
-
-class Player: public Entity {
-private:
-	//Horizontal movement params
-	const float max_speed = 125.f;
-	float vel_x = 0.f;
-	float acc = 1;
-	bool direction = true;
-
-	//Vertical movement params
-	float vel_y = 0.f;
-	float grav = 1000.f;
-	bool on_ground = true;
-	bool dJump = true;
-
-	void movement(Input* input, float dt, std::vector<Object> objects, int count) {
-		//Acceleration vertical
-		if (pressed(BUTTON_UP))
-			if (on_ground) {
-				vel_y = 400;
-				on_ground = false;
-			}
-			else if (dJump) {
-				vel_y = 300;
-				dJump = false;
-			}
-		//If u fall from platform
-		if (pos_x - half_size_x > platform.pos_x + platform.half_size_x ||
-			pos_x + half_size_x < platform.pos_x - platform.half_size_x)
-			for (Object obj : objects) {
-				if (pos_x + half_size_x < obj.pos_x + obj.half_size_x &&
-					pos_x - half_size_x > obj.pos_x - obj.half_size_x &&
-					pos_y - half_size_y >= obj.pos_y + obj.half_size_y) {
-					platform = obj;
-					break;
-				}
-			}
-		//If u flying seek for platform under u
-		if (!on_ground)
-			find_platform(objects);
-
-		//Movement vertical
-		pos_y += vel_y * dt;
-
-		//Decceleration vertical
-		if (pos_y > platform.pos_y + platform.half_size_y + half_size_y) {
-			vel_y -= grav * dt;
-		}
-		else {
-			vel_y = 0;
-			pos_y = platform.pos_y + platform.half_size_y + half_size_y;
-			on_ground = true;
-			dJump = true;
-		}
-		
-		//Acceleration horizontal
-		if (is_down(BUTTON_RIGHT)) {
-			vel_x < max_speed ? vel_x += acc : vel_x = max_speed;
-			for (Object obj : objects)
-				if (pos_x + half_size_x > obj.pos_x - obj.half_size_x &&
-					pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
-					pos_y + half_size_y > obj.pos_y - obj.half_size_y) {
-					if (pos_x < obj.pos_x) {
-						pos_x = obj.pos_x - obj.half_size_x - half_size_x;
-						vel_x = 0;
-					}
-				}
-		}
-		if (is_down(BUTTON_LEFT)) {
-			vel_x > max_speed * -1 ? vel_x -= acc : vel_x = max_speed * -1;
-			for (Object obj : objects)
-				if (pos_x - half_size_x < obj.pos_x + obj.half_size_x &&
-					pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
-					pos_y + half_size_y > obj.pos_y - obj.half_size_y) {
-					if (pos_x > obj.pos_x) {
-						pos_x = obj.pos_x + obj.half_size_x + half_size_x;
-						vel_x = 0;
-					}
-				}
-		}
-
-		//Decceleration horizontal
-		if (!(is_down(BUTTON_RIGHT) || is_down(BUTTON_LEFT))) {
-			if (vel_x > 0) {
-				vel_x -= acc * 1.5;
-				if (vel_x <= 0)
-					vel_x = 0;
-			}
-			else if (vel_x < 0) {
-				vel_x += acc * 1.5;
-				if (vel_x >= 0)
-					vel_x = 0;
-			}
-		}
-
-		//Movement horizontal
-		pos_x += vel_x * dt;
-	}
-
-	void camera() {
-		if (pos_x - camera_pos_x > 0.2 / render_scale)
-			camera_pos_x = pos_x - 0.2 / render_scale;
-		if (pos_x - camera_pos_x < -0.2 / render_scale)
-			camera_pos_x = pos_x + 0.2 / render_scale;
-
-		float cam_height = 0.1 / render_scale;
-
-		if (pos_y + cam_height != camera_pos_y) {
-			if (camera_pos_y > pos_y + cam_height) {
-				camera_pos_y -= grav * 0.9;
-				if (camera_pos_y <= pos_y + cam_height)
-					camera_pos_y = pos_y + cam_height;
-			}
-			else if (camera_pos_y < pos_y + cam_height && on_ground) {
-				camera_pos_y += acc;
-				if (camera_pos_y >= pos_y + cam_height)
-					camera_pos_y = pos_y + cam_height;
-			}
-		}
-	}
-
-public:
-	Player() {}
-
-	Player(float X, float Y, float hSizeX, float hSizeY):Entity(X, Y, hSizeX, hSizeY) {}
-
-	void find_platform(std::vector<Object> objects) {
-		for (int i = 0; i < objects.size(); i++) {
-			if (pos_x - half_size_x < objects[i].pos_x + objects[i].half_size_x &&
-				pos_x + half_size_x > objects[i].pos_x - objects[i].half_size_x &&
-				pos_y - half_size_y >= objects[i].pos_y + objects[i].half_size_y) {
-				platform = objects[i];
-				break;
-			}
-		}
-	}
-
-	void simulate(Input* input, float dt, std::vector<Object> objects, int count) {
-
-		movement(input, dt, objects, count);
-
-		camera();
-
-		draw_rect(pos_x - camera_pos_x, pos_y - camera_pos_y, half_size_x, half_size_y, 0x00FF00);
-	}
-};
 
 class Level {
 private:
 	std::vector<Object> objects;
+	std::vector<Object> platforms;
+	std::vector<Object> buttons;
+	std::vector<Object> thorns;
+
 	Player player = Player(100, 425, 10.f, 25.f);
 
 public:
 	Level() {}
 
-	void load() {
-		objects.push_back(Object(0, 0, 50, 400, 0xFF5500));
-		objects.push_back(Object(50, 0, 200, 250, 0xFF5500));
-		objects.push_back(Object(250, 0, 50, 200, 0xFF5500));
-		objects.push_back(Object(300, 0, 50, 150, 0xFF5500));
-		objects.push_back(Object(350, 0, 200, 100, 0xFF5500));
-		objects.push_back(Object(550, 0, 200, 250, 0xFF5500));
-		objects.push_back(Object(750, 0, 50, 400, 0xFF5500));
+	void load(int level) {
+		switch (level) {
+		case 1: {
+			player.set_pos(200, 325);
+			objects.push_back(Object(-50, -200, 50, 1200, 0xFF5500));//left
+			buttons.push_back(Object(200, 325, 25, 25, 0xFF0000, false));
 
-		objects.push_back(Object(300, 250, 100, 30, 0xFF5500));
-		objects.push_back(Object(450, 250, 50, 30, 0xFF5500));
+
+			objects.push_back(Object(0, -200, 550, 500, 0xFF5500));
+			objects.push_back(Object(400, -200, 50, 550, 0xFF5500));
+			objects.push_back(Object(450, -200, 100, 500, 0xFF5500));
+			objects.push_back(Object(550, -200, 50, 450, 0xFF5500));
+			objects.push_back(Object(600, -200, 100, 500, 0xFF5500));
+			objects.push_back(Object(700, -200, 100, 350, 0xFF5500));
+			objects.push_back(Object(800, -200, 350, 300, 0xFF5500));
+
+			objects.push_back(Object(800, 200, 50, 10, 0xFF5500));
+			objects.push_back(Object(850, 250, 50, 10, 0xFF5500));
+			objects.push_back(Object(800, 300, 50, 10, 0xFF5500));
+			objects.push_back(Object(850, 350, 50, 10, 0xFF5500));
+			objects.push_back(Object(1000, 200, 50, 10, 0xFF5500));
+			objects.push_back(Object(1050, 250, 50, 10, 0xFF5500));
+			objects.push_back(Object(1100, 300, 50, 10, 0xFF5500));
+
+			objects.push_back(Object(1150, -200, 100, 550, 0xFF5500));
+			objects.push_back(Object(1250, -200, 50, 500, 0xFF5500));
+			objects.push_back(Object(1300, -200, 200, 550, 0xFF5500));
+			objects.push_back(Object(1500, -200, 50, 600, 0xFF5500));
+			objects.push_back(Object(1550, -200, 50, 500, 0xFF5500));
+			objects.push_back(Object(1600, -200, 150, 550, 0xFF5500));
+			objects.push_back(Object(1750, -200, 400, 400, 0xFF5500));
+
+			objects.push_back(Object(1800, 340, 50, 10, 0xFF5500));
+			objects.push_back(Object(1900, 300, 150, 50, 0xFF5500));
+			objects.push_back(Object(2100, 200, 150, 100, 0xFF5500));
+			objects.push_back(Object(2150, -200, 150, 300, 0xFF5500));
+			objects.push_back(Object(2050, 240, 50, 10, 0xFF5500));
+
+			objects.push_back(Object(2300, 290, 50, 10, 0xFF5500));
+			objects.push_back(Object(2350, 240, 100, 10, 0xFF5500));
+
+			objects.push_back(Object(2450, -200, 100, 350, 0xFF5500));
+			objects.push_back(Object(2550, -200, 100, 300, 0xFF5500));
+			objects.push_back(Object(2650, -200, 100, 350, 0xFF5500));
+			objects.push_back(Object(2750, -200, 200, 600, 0xFF5500));
+			objects.push_back(Object(2450, 250, 300, 100, 0xFF5500));
+			objects.push_back(Object(2700, 350, 100, 300, 0xFF5500));
+
+			buttons.push_back(Object(2145, 130, 15, 30, 0xFF0000, false));
+
+
+		}break;
+		case 0:
+		default: {
+
+			player.set_pos(200, 325);
+			//objects.push_back(Object(-50, -200, 50, 1200, 0xFF5500));//left
+			buttons.push_back(Object(200, 325, 25, 25, 0xFF0000, false));
+
+
+			objects.push_back(Object(0, -200, 550, 500, 0xFF5500));
+			/*objects.push_back(Object(0, 0, 50, 400, 0xFF5500));
+			objects.push_back(Object(50, 0, 200, 250, 0xFF5500));
+			objects.push_back(Object(250, 0, 50, 200, 0xFF5500));
+			objects.push_back(Object(300, 0, 50, 150, 0xFF5500));
+			objects.push_back(Object(350, 0, 200, 100, 0xFF5500));
+			objects.push_back(Object(550, 0, 200, 250, 0xFF5500));
+			objects.push_back(Object(750, 0, 50, 400, 0xFF5500));
+
+			objects.push_back(Object(300, 250, 100, 30, 0xFF5500));
+			objects.push_back(Object(450, 250, 50, 30, 0xFF5500));*/
+
+			
+		}break;
+		}
 
 		std::sort(objects.begin(), objects.end(),
 			[](const Object& a, Object& b) {
@@ -202,14 +106,24 @@ public:
 		player.find_platform(objects);
 	}
 
+	void draw_interface(Player player) {
+		draw_rect(-165, 175, 27, 7, 0x808080);
+		draw_rect(-165, 175, 25, 5, 0xFF0000);
+		float hp = 2.5 * player.get_health();
+		draw_rect(-190 + hp, 175, hp, 5, 0x00FF00);
+	}
+
 	void run(Input* input, float dt) {
 		clear_screen(0xFFFFFF);
 
+
 		//Draw all obj
-		draw_objects(camera_pos_x, camera_pos_y, objects, objects.size());
+		draw_objects(camera_pos_x, camera_pos_y, objects);
+		draw_objects(camera_pos_x, camera_pos_y, buttons);
 
 		//Simulate player
-		player.simulate(input, dt, objects, objects.size());
+		player.simulate(input, dt, objects, buttons);
+		draw_interface(player);
 	}
 
 

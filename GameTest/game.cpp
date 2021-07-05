@@ -39,13 +39,13 @@ public:
 			objects.push_back(Object(700, -200, 100, 350, 0xFF5500));
 			objects.push_back(Object(800, -200, 350, 300, 0xFF5500));
 
-			objects.push_back(Object(800, 200, 50, 10, 0xFF5500));
-			objects.push_back(Object(850, 250, 50, 10, 0xFF5500));
-			objects.push_back(Object(800, 300, 50, 10, 0xFF5500));
-			objects.push_back(Object(850, 350, 50, 10, 0xFF5500));
-			objects.push_back(Object(1000, 200, 50, 10, 0xFF5500));
-			objects.push_back(Object(1050, 250, 50, 10, 0xFF5500));
-			objects.push_back(Object(1100, 300, 50, 10, 0xFF5500));
+			objects.push_back(Object(800, 200, 50, 10, 0x501412, true));
+			objects.push_back(Object(850, 250, 50, 10, 0x501412, true));
+			objects.push_back(Object(800, 300, 50, 10, 0x501412, true));
+			objects.push_back(Object(850, 350, 50, 10, 0x501412, true));
+			objects.push_back(Object(1000, 200, 50, 10, 0x501412, true));
+			objects.push_back(Object(1050, 250, 50, 10, 0x501412, true));
+			objects.push_back(Object(1100, 300, 50, 10, 0x501412, true));
 
 			objects.push_back(Object(1150, -200, 100, 550, 0xFF5500));
 			objects.push_back(Object(1250, -200, 50, 500, 0xFF5500));
@@ -55,14 +55,14 @@ public:
 			objects.push_back(Object(1600, -200, 150, 550, 0xFF5500));
 			objects.push_back(Object(1750, -200, 400, 400, 0xFF5500));
 
-			objects.push_back(Object(1800, 340, 50, 10, 0xFF5500));
+			objects.push_back(Object(1800, 340, 50, 10, 0x501412, true));
 			objects.push_back(Object(1900, 300, 150, 50, 0xFF5500));
 			objects.push_back(Object(2100, 200, 150, 100, 0xFF5500));
 			objects.push_back(Object(2150, -200, 150, 300, 0xFF5500));
-			objects.push_back(Object(2050, 240, 50, 10, 0xFF5500));
+			objects.push_back(Object(2050, 240, 50, 10, 0x501412, true));
 
-			objects.push_back(Object(2300, 290, 50, 10, 0xFF5500));
-			objects.push_back(Object(2350, 240, 100, 10, 0xFF5500));
+			objects.push_back(Object(2300, 290, 50, 10, 0x501412, true));
+			objects.push_back(Object(2350, 240, 100, 10, 0x501412, true));
 
 			objects.push_back(Object(2450, -200, 100, 350, 0xFF5500));
 			objects.push_back(Object(2550, -200, 100, 300, 0xFF5500));

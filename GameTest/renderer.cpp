@@ -1,66 +1,4 @@
-class Object {
-public:
-	float	pos_x;
-	float	pos_y;
-	float	half_size_x;
-	float	half_size_y;
-	uint	color;
-
-	bool state;
-
-	Object() {}
-
-	void flip () {
-		this->state = !state;
-		if (state == true) {
-			this->color = 0x00FF00;
-		}
-		else {
-			this->color = 0xFF0000;
-		}
-	}
-
-	bool isActive() {
-		return state;
-	}
-
-	Object(float X, float Y, float SizeX, float SizeY, uint color) {
-		this->pos_x = X + SizeX / 2;
-		this->pos_y = Y + SizeY / 2;
-		this->half_size_x = SizeX / 2;
-		this->half_size_y = SizeY / 2;
-		this->color = color;
-	}
-	
-	Object(float X, float Y, float SizeX, float SizeY, uint color, bool state) {
-		this->pos_x = X + SizeX / 2;
-		this->pos_y = Y + SizeY / 2;
-		this->half_size_x = SizeX / 2;
-		this->half_size_y = SizeY / 2;
-		this->color = color;
-		this->state = state;
-	}
-};
-
-class Objects {
-private:
-	Object* objects;
-	int count;
-
-public:
-	int load() {
-		count = 2;
-		objects = new Object[count];
-		objects[0] = Object(50, 50, 5, 50, 0xFF5500);
-		objects[1] = Object(0, -5, 500, 5, 0xFF5500);
-		return count;
-	}
-
-	Object* get() { return objects; }
-	int getCount() { return count; }
-
-};
-
+#include "Object.cpp"
 
 internal void 
 clear_screen(uint color) {
@@ -71,6 +9,7 @@ clear_screen(uint color) {
 		}
 	}
 }
+
 
 internal void 
 draw_rect_in_pixels(int x0, int y0, int x1, int y1, uint color) {
@@ -88,7 +27,9 @@ draw_rect_in_pixels(int x0, int y0, int x1, int y1, uint color) {
 	}
 }
 
+
 global_variable float render_scale = 0.0025f;
+
 
 internal void
 draw_rect(float x, float y, float half_x, float half_y, uint color) {
@@ -109,6 +50,7 @@ draw_rect(float x, float y, float half_x, float half_y, uint color) {
 
 	draw_rect_in_pixels(x0, y0, x1, y1, color);
 }
+
 
 internal void
 draw_objects(float cam_x, float cam_y, std::vector<Object> &objects) {

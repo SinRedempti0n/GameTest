@@ -35,6 +35,27 @@ private:
 	bool on_ground = true;
 	bool dJump = true;
 
+	void collision(std::vector<Object> objects) {
+		for (Object obj : objects)
+			if (pos_x + half_size_x > obj.pos_x - obj.half_size_x &&
+				pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
+				pos_y + half_size_y > obj.pos_y - obj.half_size_y && !obj.floating) {
+				if (pos_x < obj.pos_x) {
+					pos_x = obj.pos_x - obj.half_size_x - half_size_x;
+					vel_x = 0;
+				}
+			}
+		for (Object obj : objects)
+			if (pos_x - half_size_x < obj.pos_x + obj.half_size_x &&
+				pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
+				pos_y + half_size_y > obj.pos_y - obj.half_size_y && !obj.floating) {
+				if (pos_x > obj.pos_x) {
+					pos_x = obj.pos_x + obj.half_size_x + half_size_x;
+					vel_x = 0;
+				}
+			}
+	}
+
 	void movement(Input* input, float dt, std::vector<Object> objects, std::vector<Object>& buttons) {
 		//Acceleration vertical
 		if (pressed(BUTTON_UP))
@@ -58,16 +79,22 @@ private:
 				}
 			}
 		//If u flying seek for platform under u
-		if (!on_ground)
+		if (!on_ground) {
 			find_platform(objects);
+			for (Object obj : objects)
+				if ((pos_x - half_size_x < obj.pos_x + obj.half_size_x ||
+					pos_x + half_size_x > obj.pos_x - obj.half_size_x) &&
+					pos_y + half_size_y > obj.pos_y - obj.half_size_y && !obj.floating) {
+					pos_y = obj.pos_y - obj.half_size_y - half_size_y;
+					vel_y = 0;
+				}
+		}
 
 		//Movement vertical
 		pos_y += vel_y * dt;
 
 		//Decceleration vertical
-		if (pos_y > platform.pos_y + platform.half_size_y + half_size_y) {
-			vel_y -= grav * dt;
-		}
+		if (pos_y > platform.pos_y + platform.half_size_y + half_size_y) { vel_y -= grav * dt; }
 		else {
 			vel_y = 0;
 			pos_y = platform.pos_y + platform.half_size_y + half_size_y;
@@ -78,55 +105,23 @@ private:
 		//Acceleration horizontal
 		if (is_down(BUTTON_RIGHT)) {
 			vel_x < max_speed ? vel_x += acc : vel_x = max_speed;
-			for (Object obj : objects)
-				if (pos_x + half_size_x > obj.pos_x - obj.half_size_x &&
-					pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
-					pos_y + half_size_y > obj.pos_y - obj.half_size_y) {
-					if (pos_x < obj.pos_x) {
-						pos_x = obj.pos_x - obj.half_size_x - half_size_x;
-						vel_x = 0;
-					}
-				}
+			collision(objects);
 		}
 		if (is_down(BUTTON_LEFT)) {
 			vel_x > max_speed * -1 ? vel_x -= acc : vel_x = max_speed * -1;
-			for (Object obj : objects)
-				if (pos_x - half_size_x < obj.pos_x + obj.half_size_x &&
-					pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
-					pos_y + half_size_y > obj.pos_y - obj.half_size_y) {
-					if (pos_x > obj.pos_x) {
-						pos_x = obj.pos_x + obj.half_size_x + half_size_x;
-						vel_x = 0;
-					}
-				}
+			collision(objects);
 		}
 
 		//Decceleration horizontal
 		if (!(is_down(BUTTON_RIGHT) || is_down(BUTTON_LEFT))) {
-			for (Object obj : objects)
-				if (pos_x + half_size_x > obj.pos_x - obj.half_size_x &&
-					pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
-					pos_y + half_size_y > obj.pos_y - obj.half_size_y) {
-					if (pos_x < obj.pos_x) {
-						pos_x = obj.pos_x - obj.half_size_x - half_size_x;
-						vel_x = 0;
-					}
-				}
-			for (Object obj : objects)
-				if (pos_x - half_size_x < obj.pos_x + obj.half_size_x &&
-					pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
-					pos_y + half_size_y > obj.pos_y - obj.half_size_y) {
-					if (pos_x > obj.pos_x) {
-						pos_x = obj.pos_x + obj.half_size_x + half_size_x;
-						vel_x = 0;
-					}
-				}
 			if (vel_x > 0) {
+				collision(objects);
 				vel_x -= acc * 1.5;
 				if (vel_x <= 0)
 					vel_x = 0;
 			}
 			else if (vel_x < 0) {
+				collision(objects);
 				vel_x += acc * 1.5;
 				if (vel_x >= 0)
 					vel_x = 0;

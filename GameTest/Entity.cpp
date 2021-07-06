@@ -37,18 +37,20 @@ private:
 
 	void collision(std::vector<Object> objects) {
 		for (Object obj : objects)
-			if (pos_x + half_size_x > obj.pos_x - obj.half_size_x &&
+			if (!obj.floating &&
+				pos_x + half_size_x > obj.pos_x - obj.half_size_x &&
 				pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
-				pos_y + half_size_y > obj.pos_y - obj.half_size_y && !obj.floating) {
+				pos_y + half_size_y > obj.pos_y - obj.half_size_y ) {
 				if (pos_x < obj.pos_x) {
 					pos_x = obj.pos_x - obj.half_size_x - half_size_x;
 					vel_x = 0;
 				}
 			}
 		for (Object obj : objects)
-			if (pos_x - half_size_x < obj.pos_x + obj.half_size_x &&
+			if (!obj.floating &&
+				pos_x - half_size_x < obj.pos_x + obj.half_size_x &&
 				pos_y - half_size_y < obj.pos_y + obj.half_size_y &&
-				pos_y + half_size_y > obj.pos_y - obj.half_size_y && !obj.floating) {
+				pos_y + half_size_y > obj.pos_y - obj.half_size_y) {
 				if (pos_x > obj.pos_x) {
 					pos_x = obj.pos_x + obj.half_size_x + half_size_x;
 					vel_x = 0;
@@ -78,13 +80,16 @@ private:
 					break;
 				}
 			}
-		//If u flying seek for platform under u
+		//If u flying seek for platform under ud
 		if (!on_ground) {
 			find_platform(objects);
 			for (Object obj : objects)
-				if ((pos_x - half_size_x < obj.pos_x + obj.half_size_x || pos_x + half_size_x > obj.pos_x - obj.half_size_x) && pos_y + half_size_y > obj.pos_y - obj.half_size_y && !obj.floating) {
-					pos_y = obj.pos_y - obj.half_size_y - half_size_y;
-					vel_y = 0;
+				if (!obj.floating &&
+					((pos_x - half_size_x < obj.pos_x + obj.half_size_x && pos_x - half_size_x > obj.pos_x - obj.half_size_x) ||
+					(pos_x + half_size_x > obj.pos_x - obj.half_size_x && pos_x + half_size_x < obj.pos_x + obj.half_size_x)) &&
+					pos_y + half_size_y > obj.pos_y - obj.half_size_y && pos_y + half_size_y < obj.pos_y + obj.half_size_y) {
+					pos_y = obj.pos_y - obj.half_size_y - half_size_y - grav * dt;
+					vel_y = -1 * grav * dt;
 				}
 		}
 

@@ -13,12 +13,10 @@ public:
 
 	void flip() {
 		this->state = !state;
-		if (state == true) {
+		if (state == true) 
 			this->color = 0x00FF00;
-		}
-		else {
+		else 
 			this->color = 0xFF0000;
-		}
 	}
 
 	bool isActive() {
@@ -40,12 +38,10 @@ public:
 		this->half_size_x = SizeX / 2;
 		this->half_size_y = SizeY / 2;
 		this->color = color;
-		if (type == true) {
+		if (type == true) 
 			this->floating = true;
-		}
-		else {
+		else 
 			this->state = false;
-		}
 	}
 
 

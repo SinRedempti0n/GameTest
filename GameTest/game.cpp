@@ -10,6 +10,8 @@ global_variable float camera_pos_y = 0.f;
 
 #include "Entity.cpp"
 
+BITMAPFILEHEADER hdr;
+
 
 class Level {
 private:

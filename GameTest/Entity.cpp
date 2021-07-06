@@ -82,9 +82,7 @@ private:
 		if (!on_ground) {
 			find_platform(objects);
 			for (Object obj : objects)
-				if ((pos_x - half_size_x < obj.pos_x + obj.half_size_x ||
-					pos_x + half_size_x > obj.pos_x - obj.half_size_x) &&
-					pos_y + half_size_y > obj.pos_y - obj.half_size_y && !obj.floating) {
+				if ((pos_x - half_size_x < obj.pos_x + obj.half_size_x || pos_x + half_size_x > obj.pos_x - obj.half_size_x) && pos_y + half_size_y > obj.pos_y - obj.half_size_y && !obj.floating) {
 					pos_y = obj.pos_y - obj.half_size_y - half_size_y;
 					vel_y = 0;
 				}

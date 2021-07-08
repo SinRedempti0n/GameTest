@@ -2,8 +2,11 @@
 #include <Windows.h>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <Magick++.h>
 
 global_variable bool running = true;
+global_variable bool update = false;
 
 struct Render_State {
 	int height, width;
@@ -46,7 +49,7 @@ LRESULT CALLBACK window_callback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			render_state.bitmap_info.bmiHeader.biBitCount = 32;
 			render_state.bitmap_info.bmiHeader.biCompression = BI_RGB;
 
-
+			update = true;
 		} break;
 
 		default: {
@@ -67,7 +70,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 	RegisterClass(&window_class);
 
 	//Create Window
-	HWND window = CreateWindow(window_class.lpszClassName, L"Game V0.01", WS_OVERLAPPEDWINDOW | WS_MAXIMIZEBOX | WS_SYSMENU | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
+	HWND window = CreateWindow(window_class.lpszClassName, L"Game V0.01", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 1280, 720, 0, 0, hInstance, 0);
 	HDC hdc = GetDC(window);
 	PAINTSTRUCT paintStruct;
 	RECT rectPlace;
@@ -87,8 +90,11 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 
 	//INITIALIZE
 	Level level1;
+	int level_count;
 	level1.load(1);
+	
 
+	update = false;
 	while (running) {
 		//Input
 		MSG message;
@@ -120,10 +126,13 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
 			}
 			
 		}
-		
+		if (update) {
+			level1.update_textures();
+			update = false;
+		}
 		//Simulate
 		level1.run(&input, delta_time);
-
+		
 		//Render
 		StretchDIBits(hdc, 0, 0, render_state.width, render_state.height, 0, 0, render_state.width, render_state.height, render_state.memory, &render_state.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
 		

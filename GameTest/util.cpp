@@ -1,6 +1,6 @@
 typedef unsigned int uint;
 
-#define internal static
+//#define internal static
 #define global_variable static
 
 inline int

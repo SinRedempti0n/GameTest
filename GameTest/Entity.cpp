@@ -192,7 +192,9 @@ public:
 
 	void set_pos(float X, float Y) {
 		this->pos_x = X;
-		this->pos_y;
+		this->pos_y = Y;
+		camera_pos_x = X;
+		camera_pos_y = Y;
 	}
 
 	int get_health() { return health; }

@@ -4,10 +4,13 @@ public:
 	float	pos_y;
 	float	half_size_x;
 	float	half_size_y;
+	int map_count = 0;
+	int text_size;
 	uint	color;
 
 	bool floating;
 	bool state;
+
 
 	Object() {}
 
@@ -44,6 +47,15 @@ public:
 			this->state = false;
 	}
 
-
+	Object(float X, float Y, float SizeX, float SizeY, uint color, int map, int tSize) {
+		this->pos_x = X + SizeX / 2;
+		this->pos_y = Y + SizeY / 2;
+		this->half_size_x = SizeX / 2;
+		this->half_size_y = SizeY / 2;
+		this->color = color;
+		this->floating = false;
+		this->map_count = map;
+		this->text_size = tSize;
+	}
 };
 

@@ -42,4 +42,9 @@
       <Filter>Исходные файлы</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\..\..\..\Program Files\ImageMagick-7.1.0-Q16-HDRI\lib\CORE_RL_Magick++_.lib">
+      <Filter>Исходные файлы</Filter>
+    </Library>
+  </ItemGroup>
 </Project>

@@ -156,6 +156,31 @@ void textures_gen(std::vector<std::string> textures, std::vector<std::vector<uin
 		}
 	}
 
+	//Mist
+	for (int i = 2; i < 6; i++) {
+		Magick::Image image(textures[i]);
+
+		int width = 50 * render_state.width * render_scale + 1;
+		int height = 50 * render_state.height * render_scale;
+
+		Magick::Geometry geo(width, height);
+		image.scale(geo);
+		image.flip();
+		image.write("out.png");
+
+		rgb = static_cast<unsigned char*>(malloc(3 * width * height));
+		image.write(0, 0, width, height, "RGB", Magick::CharPixel, rgb);
+		map.push_back(a);
+
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				uint pixel = (uint)(*rgb++) << 16;
+				pixel |= (uint)(*rgb++) << 8;
+				pixel |= (uint)(*rgb++);
+				map[i].push_back(pixel);
+			}
+	}
+
 	//map.push_back(a);
 	//for (int n = 0; n < height; n++)
 	//	map[1].insert(map[1].end(), tmp[image.rows() - n - 1].begin(), tmp[image.rows() - n - 1].end());

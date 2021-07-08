@@ -33,6 +33,10 @@ public:
 		case 1: {
 			textures.push_back("Textures\\Objects\\Fone.png");
 			textures.push_back("Textures\\Objects\\Block.png");
+			textures.push_back("Textures\\Entity\\Mist\\Walking\\1.png");
+			textures.push_back("Textures\\Entity\\Mist\\Walking\\2.png");
+			textures.push_back("Textures\\Entity\\Mist\\Walking\\3.png");
+			textures.push_back("Textures\\Entity\\Mist\\Walking\\4.png");
 
 			textures_gen(textures, map);
 

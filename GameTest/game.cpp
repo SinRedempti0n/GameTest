@@ -23,7 +23,7 @@ private:
 	std::vector<std::string> textures;
 	std::vector<std::vector<uint>> map;
 
-	Player player = Player(100, 425, 10.f, 25.f);
+	Player player = Player(100, 425, 8.f, 13.5	);
 
 public:
 	Level() {}
@@ -137,7 +137,7 @@ public:
 		draw_objects(camera_pos_x, camera_pos_y, buttons, map);
 
 		//Simulate player
-		player.simulate(input, dt, objects, buttons);
+		player.simulate(input, dt, objects, buttons, map);
 		draw_interface(player);
 	}
 	void update_textures(){textures_gen(textures, map);}

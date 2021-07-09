@@ -71,6 +71,47 @@ draw_rect(float x, float y, float half_x, float half_y, uint color) {
 
 
 static void
+draw_player(float x, float y, float half_x, float half_y, std::vector<uint> texture, int xtSize, int ytSize, bool dir) {
+	x *= render_state.width * render_scale;
+	y *= render_state.height * render_scale;
+	half_x *= render_state.width * render_scale;
+	half_y *= render_state.height * render_scale;
+
+	x += render_state.width / 2.f;
+	y += render_state.height / 2.f;
+
+	//Change to pixels
+	int x0 = x - half_x;
+	int y0 = y - half_y;
+	int x1 = x + half_x;
+	int y1 = y + half_y;
+
+	x0 = clamp(0, x0, render_state.width);
+	x1 = clamp(0, x1, render_state.width);
+	y0 = clamp(0, y0, render_state.height);
+	y1 = clamp(0, y1, render_state.height);
+
+	int count = 0;
+	for (int i = y0; i < y1; i += 1) {
+		uint* pixel = (uint*)render_state.memory + x0 + i * render_state.width;
+			for (int naxui = x0; naxui < x1; naxui += 1) {
+			int a = (i - y0);
+			int b = (naxui - x0);
+			int cord;
+			if (dir)
+				cord = a * (51) + b;
+			else
+				cord = (a + 1) * 51 - b - 1;
+			if(texture[cord] != 0 && texture[cord] != 0x00ffffff)
+				*pixel = texture[cord];
+			*pixel++;
+			}
+	}
+	
+}
+
+
+static void
 draw_obj(float x, float y, float half_x, float half_y, std::vector<uint> texture, int tSize) {
 	x *= render_state.width * render_scale;
 	y *= render_state.height * render_scale;
@@ -107,8 +148,8 @@ draw_obj(float x, float y, float half_x, float half_y, std::vector<uint> texture
 }
 
 
-void textures_gen(std::vector<std::string> textures, std::vector<std::vector<uint>> &map) {
-	for(std::vector<uint> m: map)
+void textures_gen(std::vector<std::string> textures, std::vector<std::vector<uint>>& map) {
+	for (std::vector<uint> m : map)
 		m.clear();
 	//Fone
 	Magick::InitializeMagick("C:\Program Files\ImageMagick-7.1.0-Q16-HDRI");
@@ -131,7 +172,7 @@ void textures_gen(std::vector<std::string> textures, std::vector<std::vector<uin
 			map[0].push_back(pixel);
 		}
 	}
-	
+
 	//Block
 	Magick::Image image(textures[1]);
 
@@ -142,7 +183,7 @@ void textures_gen(std::vector<std::string> textures, std::vector<std::vector<uin
 	image.scale(geo);
 	image.flip();
 	image.write("out.png");
-	
+
 	rgb = static_cast<unsigned char*>(malloc(3 * width * height));
 	image.write(0, 0, width, height, "RGB", Magick::CharPixel, rgb);
 	map.push_back(a);
@@ -157,19 +198,19 @@ void textures_gen(std::vector<std::string> textures, std::vector<std::vector<uin
 	}
 
 	//Mist
-	for (int i = 2; i < 6; i++) {
-		Magick::Image image(textures[i]);
+	for (int N = 2; N < 6; N++) {
+		Magick::Image image1(textures[N]);
 
-		int width = 50 * render_state.width * render_scale + 1;
-		int height = 50 * render_state.height * render_scale;
+		width = 51;
+		height = 46;
 
-		Magick::Geometry geo(width, height);
-		image.scale(geo);
-		image.flip();
-		image.write("out.png");
+		geo = Magick::Geometry(width, height);
+		image1.scale(geo);
+		image1.flip();
+		image1.write("out" + std::to_string(N) + ".png");
 
 		rgb = static_cast<unsigned char*>(malloc(3 * width * height));
-		image.write(0, 0, width, height, "RGB", Magick::CharPixel, rgb);
+		image1.write(0, 0, width, height, "RGB", Magick::CharPixel, rgb);
 		map.push_back(a);
 
 		for (int i = 0; i < height; i++) {
@@ -177,10 +218,10 @@ void textures_gen(std::vector<std::string> textures, std::vector<std::vector<uin
 				uint pixel = (uint)(*rgb++) << 16;
 				pixel |= (uint)(*rgb++) << 8;
 				pixel |= (uint)(*rgb++);
-				map[i].push_back(pixel);
+				map[N].push_back(pixel);
 			}
+		}
 	}
-
 	//map.push_back(a);
 	//for (int n = 0; n < height; n++)
 	//	map[1].insert(map[1].end(), tmp[image.rows() - n - 1].begin(), tmp[image.rows() - n - 1].end());

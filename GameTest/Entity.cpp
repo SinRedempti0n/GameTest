@@ -22,12 +22,17 @@ class Player : public Entity {
 private:
 	//Param
 	int health = 8;
+	int map_count = 2;
+	
+
 
 	//Horizontal movement params
 	const float max_speed = 125.f;
 	float vel_x = 0.f;
 	float acc = 1;
 	bool direction = true;
+	float lPos_x;
+	int xAnim = 12;
 
 	//Vertical movement params
 	float vel_y = 0.f;
@@ -115,7 +120,6 @@ private:
 
 		//Decceleration vertical
 		if (pos_y - half_size_y > platform.pos_y + platform.half_size_y) {
-
 			vel_y -= grav * dt;
 		}
 		else {
@@ -125,22 +129,57 @@ private:
 			dJump = true;
 		}
 
+		if (vel_x < 12.5 && vel_x > -12.5 && on_ground) {
+			lPos_x = pos_x;
+			map_count = 2;
+		}
+
 		//Acceleration horizontal
 		if (is_down(BUTTON_RIGHT)) {
+			this->direction = true;
 			vel_x < max_speed ? vel_x += acc : vel_x = max_speed;
+			if (lPos_x + xAnim < pos_x && on_ground) {
+				lPos_x = pos_x;
+				if (map_count < 5)
+					map_count++;
+				else
+					map_count = 2;
+			}
 		}
 		if (is_down(BUTTON_LEFT)) {
+			this->direction = false;
 			vel_x > max_speed * -1 ? vel_x -= acc : vel_x = max_speed * -1;
+			if (lPos_x - xAnim > pos_x && on_ground) {
+				lPos_x = pos_x;
+				if (map_count < 5)
+					map_count++;
+				else
+					map_count = 2;
+			}
 		}
 
 		//Decceleration horizontal
 		if (!(is_down(BUTTON_RIGHT) || is_down(BUTTON_LEFT))) {
 			if (vel_x > 0) {
+				if (lPos_x + xAnim < pos_x && on_ground) {
+					lPos_x = pos_x;
+					if (map_count < 5)
+						map_count++;
+					else
+						map_count = 2;
+				}
 				vel_x -= acc * 1.5;
 				if (vel_x <= 0)
 					vel_x = 0;
 			}
 			else if (vel_x < 0) {
+				if (lPos_x - xAnim > pos_x && on_ground) {
+					lPos_x = pos_x;
+					if (map_count < 5)
+						map_count++;
+					else
+						map_count = 2;
+				}
 				vel_x += acc * 1.5;
 				if (vel_x >= 0)
 					vel_x = 0;
@@ -211,7 +250,9 @@ private:
 public:
 	Player() {}
 
-	Player(float X, float Y, float hSizeX, float hSizeY) :Entity(X, Y, hSizeX, hSizeY) {}
+	Player(float X, float Y, float hSizeX, float hSizeY) :Entity(X, Y, hSizeX, hSizeY) {
+		lPos_x = X;
+	}
 
 	void find_platform(std::vector<Object> objects) {
 		for (int i = 0; i < objects.size(); i++) {
@@ -233,12 +274,12 @@ public:
 
 	int get_health() { return health; }
 
-	void simulate(Input* input, float dt, std::vector<Object> objects, std::vector<Object>& buttons) {
+	void simulate(Input* input, float dt, std::vector<Object> objects, std::vector<Object>& buttons, std::vector<std::vector<uint>> map) {
 
 		movement(input, dt, objects, buttons);
 
 		camera();
 
-		draw_rect(pos_x - camera_pos_x, pos_y - camera_pos_y, half_size_x, half_size_y, 0x00FF00);
+		draw_player(pos_x - camera_pos_x, pos_y - camera_pos_y, half_size_x, half_size_y, map[map_count], 16, 27, this->direction);
 	}
 };

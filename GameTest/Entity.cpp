@@ -29,7 +29,7 @@ private:
 	//Horizontal movement params
 	const float max_speed = 125.f;
 	float vel_x = 0.f;
-	float acc = 1;
+	float acc = 120;
 	bool direction = true;
 	float lPos_x;
 	int xAnim = 12;
@@ -137,7 +137,7 @@ private:
 		//Acceleration horizontal
 		if (is_down(BUTTON_RIGHT)) {
 			this->direction = true;
-			vel_x < max_speed ? vel_x += acc : vel_x = max_speed;
+			vel_x < max_speed ? vel_x += acc * dt : vel_x = max_speed;
 			if (lPos_x + xAnim < pos_x && on_ground) {
 				lPos_x = pos_x;
 				if (map_count < 5)
@@ -148,7 +148,7 @@ private:
 		}
 		if (is_down(BUTTON_LEFT)) {
 			this->direction = false;
-			vel_x > max_speed * -1 ? vel_x -= acc : vel_x = max_speed * -1;
+			vel_x > max_speed * -1 ? vel_x -= acc * dt : vel_x = max_speed * -1;
 			if (lPos_x - xAnim > pos_x && on_ground) {
 				lPos_x = pos_x;
 				if (map_count < 5)
@@ -168,7 +168,7 @@ private:
 					else
 						map_count = 2;
 				}
-				vel_x -= acc * 1.5;
+				vel_x -= acc * 2 * dt;
 				if (vel_x <= 0)
 					vel_x = 0;
 			}
@@ -180,7 +180,7 @@ private:
 					else
 						map_count = 2;
 				}
-				vel_x += acc * 1.5;
+				vel_x += acc * 2 * dt;
 				if (vel_x >= 0)
 					vel_x = 0;
 			}
@@ -221,7 +221,7 @@ private:
 
 	}
 
-	void camera() {
+	void camera(float dt) {
 		float x_scale = 0.1;
 		if (pos_x - camera_pos_x > x_scale / render_scale)
 			camera_pos_x = pos_x - x_scale / render_scale;
@@ -232,12 +232,12 @@ private:
 
 		if (pos_y + cam_height != camera_pos_y) {
 			if (camera_pos_y > pos_y + cam_height) {
-				camera_pos_y -= grav * 0.9;
+				camera_pos_y -= grav * 0.9 * dt;
 				if (camera_pos_y <= pos_y + cam_height)
 					camera_pos_y = pos_y + cam_height;
 			}
 			else if (camera_pos_y < pos_y + cam_height && on_ground) {
-				camera_pos_y += acc;
+				camera_pos_y += 2 * acc * dt;
 				if (camera_pos_y >= pos_y + cam_height)
 					camera_pos_y = pos_y + cam_height;
 			}
@@ -278,7 +278,7 @@ public:
 
 		movement(input, dt, objects, buttons);
 
-		camera();
+		camera(dt);
 
 		draw_player(pos_x - camera_pos_x, pos_y - camera_pos_y, half_size_x, half_size_y, map[map_count], 16, 27, this->direction);
 	}
